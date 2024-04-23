@@ -8,4 +8,5 @@ It can be used in a CRON job, or piped with a Slack (or Signal, Telegram, etc.) 
 
 1. Install `bun` (see [installation](https://bun.sh/docs/installation) guide)
 2. Install dependencies: `bun install`
-3. Run the program: `bun run app.ts`
+3. Create `.env` file containing your credentials: `echo "USERNAME={username}\nPASSWORD={password}" > .env`
+4. Run the program: `bun run app.ts`
