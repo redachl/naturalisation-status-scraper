@@ -31,7 +31,7 @@ async function main() {
 
     console.log(new Date().toISOString(), "Authenticated!");
 
-    await page.waitForNetworkIdle();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     const resp = await page.goto(
       "https://administration-etrangers-en-france.interieur.gouv.fr/api/anf/dossier-stepper"
     );
