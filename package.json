@@ -1,0 +1,16 @@
+{
+  "name": "naturalisation-status-scraper",
+  "module": "app.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.10",
+    "prettier": "3.2.5",
+    "puppeteer": "^22.7.0"
+  }
+}
