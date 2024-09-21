@@ -1,20 +1,19 @@
 import dayjs from "dayjs";
 import puppeteer from "puppeteer";
 import relativeTime from "dayjs/plugin/relativeTime";
+import {
+  readStorageFile,
+  writeStorageFile,
+  type StatusResponse,
+} from "./storage";
 
 dayjs.extend(relativeTime);
 
-type StatusResponse = {
-  dossier?: {
-    id: number;
-    numero_national: string;
-    statut: string;
-    date_statut: string;
-    numero_timbre: string;
-  };
-};
-
 async function main() {
+  const prevResponses = await readStorageFile(
+    process.env["STORAGE_PATH"] ?? "statuses.db"
+  );
+
   console.log(new Date().toISOString(), "Authenticating...");
 
   const browser = await puppeteer.launch();
@@ -31,7 +30,7 @@ async function main() {
 
     console.log(new Date().toISOString(), "Authenticated!");
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 2 * 1000));
     const resp = await page.goto(
       "https://administration-etrangers-en-france.interieur.gouv.fr/api/anf/dossier-stepper"
     );
@@ -56,6 +55,14 @@ async function main() {
       dayjs(parsedResp.dossier.date_statut).fromNow(),
       "(" + dayjs(parsedResp.dossier.date_statut).toISOString() + ")"
     );
+
+    const prevStatusTime =
+      prevResponses[prevResponses.length - 1]?.dossier?.date_statut;
+    if (prevStatusTime !== parsedResp.dossier.date_statut) {
+      console.log(new Date().toISOString(), "Status changed!");
+      prevResponses.push(parsedResp);
+      await writeStorageFile(process.env["STORAGE_PATH"] ?? "", prevResponses);
+    }
   } catch (e) {
     throw e;
   } finally {
